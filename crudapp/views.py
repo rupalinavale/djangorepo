@@ -1,6 +1,7 @@
 from django.shortcuts import render,HttpResponseRedirect
 from .forms import StudentForm
 from .models import Student
+from django.contrib import messages
 
 # Create your views here.
 def add_show(request):
@@ -15,6 +16,9 @@ def add_show(request):
             # fm.save()      #save data in db
             res.save()    #save data in db using cleand_data method
             fm = StudentForm()  #after adding data in db show blank form
+            messages.success(request, "Student Added." )
+        else:    
+            messages.error(request, "Error. Message not sent.")    
     else:
         fm = StudentForm()
     stud = Student.objects.all()
@@ -27,6 +31,7 @@ def delete_data(request,id):
     if request.method == "POST":
         pi = Student.objects.get(pk=id)
         pi.delete()
+        messages.success(request, "Student Data Deleted...." )
         return HttpResponseRedirect('/')
 
 def update_data(request,id):
@@ -36,9 +41,13 @@ def update_data(request,id):
         fm=StudentForm(request.POST,instance=pi)
         if fm.is_valid():
             fm.save()
+            messages.success(request, "Student Data Updated successfully...." )  
+
+            
     else:
         pi = Student.objects.get(pk=id)
         fm = StudentForm(instance=pi)
+      
     return render(request,'crudapp/update.html' ,{'form':fm})
 
 
